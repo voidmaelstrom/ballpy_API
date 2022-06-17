@@ -22,13 +22,36 @@ def index():
         models.db.session.add(new_reptile)
         models.db.session.commit()
 
-    # Only returning the first record from the DB here
-    for reptile in models.Reptile.query.all():
-      return {
+        return "Reptile added successfully!"
+
+    reptiles = models.Reptile.query.all()
+
+    reptile_dict = {
+        'reptiles': []
+    }
+    
+    for reptile in reptiles:
+      reptile_dict['reptiles'].append({
         "id": reptile.id,
         "common_name": reptile.common_name,
         "scientific_name": reptile.scientific_name,
         "conservation_status": reptile.conservation_status,
         "native_habitat": reptile.native_habitat,
         "fun_fact": reptile.fun_fact
-      }
+      })
+
+    return reptile_dict
+
+@bp.route('/<int:id>')
+def show(id):
+  reptiles = models.Reptile.query.filter_by(id=id).first()
+  rep_dict = {
+    'id': reptiles.id,
+    'common_name': reptiles.common_name,
+    'scientific_name': reptiles.scientific_name,
+    'conservation_status': reptiles.conservation_status,
+    'native_habitat': reptiles.native_habitat,
+    'fun_fact': reptiles.fun_fact
+  }
+
+  return rep_dict
