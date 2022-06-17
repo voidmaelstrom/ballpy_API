@@ -1,5 +1,6 @@
+from os import abort
 from unittest import result
-from flask import ( Blueprint, request, redirect, jsonify )
+from flask import ( Blueprint, abort, request, redirect, jsonify )
 import json
 from . import models
 
@@ -45,6 +46,11 @@ def index():
 @bp.route('/<int:id>')
 def show(id):
   reptiles = models.Reptile.query.filter_by(id=id).first()
+
+  # Return 404 Not Found if requested id passed isn't returned
+  if reptiles is None:
+    abort(404)
+
   rep_dict = {
     'id': reptiles.id,
     'common_name': reptiles.common_name,
